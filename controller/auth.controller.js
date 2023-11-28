@@ -167,20 +167,20 @@ async function ForgotPassword(req, res) {
         console.log(urlAPI);
 
         // async..await is not allowed in global scope, must use a wrapper
-        // async function main() {
+        async function main() {
         //     // send mail with defined transport object
-        //     const info = await transporter.sendMail({
-        //         from: process.env.MAIL_SMTP, // sender address
-        //         to: email, // list of receivers
-        //         subject: "Forgot Password | Binar Academy ✔", // Subject line
-        //         html: `
-        //             <p><b>Please Verify with link bellow!</b> </p>
-        //             <p><b>This token valid for 15 minutes!</b> </p>
-        //             <p><a href='${urlFrontend}'>Click Here For Reset Password!</a></p>
-        //         `, // html body
-        //     });
-        // }
-        // main().catch(console.error);
+             const info = await transporter.sendMail({
+                from: process.env.MAIL_SMTP, // sender address
+                to: email, // list of receivers
+                 subject: "Forgot Password | Binar Academy ✔", // Subject line
+                 html: `
+                     <p><b>Please Verify with link bellow!</b> </p>
+                     <p><b>This token valid for 15 minutes!</b> </p>
+                     <p><a href='${urlFrontend}'>Click Here For Reset Password!</a></p>
+                 `, // html body
+            });
+         }
+         main().catch(console.error);
 
         let respons = ResponseTemplate(null, "success", null, 200);
         res.status(200).json(respons);
