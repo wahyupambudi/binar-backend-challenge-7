@@ -167,11 +167,9 @@ app.post("/forgotpassword", async (req, res) => {
     );
 
     if (response.data.message == "success") {
-      res.render("forgotpassword", { error: `${response.data.message}` });
+      res.render("forgotpassword", {error: "check your email"})
     } else {
-      res.render("forgotpassword", {
-        error: "Login failed. Please check your credentials.",
-      });
+      res.render("forgotpassword", { error: `${response.data.message}` });
     }
   } catch (error) {
     // console.error('Error during login:', error);
@@ -199,11 +197,9 @@ app.post("/resetpassword/:token", async (req, res) => {
     );
 
     if (response.data.message == "success") {
-      res.render("resetpassword", { error: `${response.data.message}` });
+      res.redirect("/login")
     } else {
-      res.render("resetpassword", {
-        error: "Login failed. Please check your credentials.",
-      });
+      res.render("resetpassword", { error: `${response.data.message}` });
     }
   } catch (error) {
     // console.error('Error during login:', error);
