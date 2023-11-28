@@ -5,6 +5,7 @@ const { getUserFromToken } = require("../helper/jwt.helper");
 const { ResponseTemplate } = require("../helper/template.helper");
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
+const Sentry = require("@sentry/node");
 require("dotenv").config();
 
 const listTokens = [];
