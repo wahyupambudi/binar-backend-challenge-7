@@ -57,24 +57,6 @@ async function Register(req, res, next) {
             },
         });
 
-        // const path = "/api/v1/auth/verify";
-        // const fullUrl = `${req.protocol}://${req.get(
-        //     "host",
-        // )}${path}/${email}?is_verified=true`;
-        // // console.log(fullUrl)
-
-        // // async..await is not allowed in global scope, must use a wrapper
-        // async function main() {
-        //     // send mail with defined transport object
-        //     const info = await transporter.sendMail({
-        //         from: process.env.MAIL_SMTP, // sender address
-        //         to: `${email}`, // list of receivers
-        //         subject: "User Created | Please Verify ✔", // Subject line
-        //         html: `<b>Please Verify with link bellow!</b> <p><a href='${fullUrl}'>Click Here For Verify!</a></p>`, // html body
-        //     });
-        // }
-        // main().catch(console.error);
-
         let respons = ResponseTemplate(null, "created success", null, 200);
         res.status(200).json(respons);
         return;
@@ -169,23 +151,23 @@ async function ForgotPassword(req, res) {
         const fullUrl = `${req.protocol}://${req.get(
             "host",
         )}${path}/${getTokenReset}`;
-        console.log(fullUrl);
+        // console.log(fullUrl);
 
         // async..await is not allowed in global scope, must use a wrapper
-        // async function main() {
-        //     // send mail with defined transport object
-        //     const info = await transporter.sendMail({
-        //         from: process.env.MAIL_SMTP, // sender address
-        //         to: "pejuangkehidupan789@gmail.com", // list of receivers
-        //         subject: "Forgot Password | Binar Academy ✔", // Subject line
-        //         html: `
-        //             <p><b>Please Verify with link bellow!</b> </p>
-        //             <p><b>This token valid for 15 minutes!</b> </p>
-        //             <p><a href='${fullUrl}'>Click Here For Reset Password!</a></p>
-        //         `, // html body
-        //     });
-        // }
-        // main().catch(console.error);
+        async function main() {
+            // send mail with defined transport object
+            const info = await transporter.sendMail({
+                from: process.env.MAIL_SMTP, // sender address
+                to: email, // list of receivers
+                subject: "Forgot Password | Binar Academy ✔", // Subject line
+                html: `
+                    <p><b>Please Verify with link bellow!</b> </p>
+                    <p><b>This token valid for 15 minutes!</b> </p>
+                    <p><a href='${fullUrl}'>Click Here For Reset Password!</a></p>
+                `, // html body
+            });
+        }
+        main().catch(console.error);
 
         let respons = ResponseTemplate(null, "success", null, 200);
         res.status(200).json(respons);
@@ -224,6 +206,7 @@ async function ResetPassword(req, res) {
         // dapatkan email
         const email = getEmail[0];
 
+        // hashing password
         const hashPass = await HashPassword(newPassword);
 
         const users = await prisma.users.update({
