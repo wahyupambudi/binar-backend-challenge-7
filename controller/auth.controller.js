@@ -61,6 +61,7 @@ async function Register(req, res, next) {
         res.status(200).json(respons);
         return;
     } catch (error) {
+        Sentry.captureException(error);
         next(error);
     }
 }
@@ -105,6 +106,7 @@ async function Login(req, res, next) {
         res.status(200).json(respons);
         return;
     } catch (error) {
+        Sentry.captureException(error);
         next(error);
     }
 }
@@ -174,6 +176,7 @@ async function ForgotPassword(req, res) {
         res.status(200).json(respons);
         return;
     } catch (error) {
+        Sentry.captureException(error);
         console.log(error);
         let resp = ResponseTemplate(null, "internal server error", error, 500);
         res.json(resp);
@@ -223,6 +226,7 @@ async function ResetPassword(req, res) {
         res.status(200).json(respons);
         return;
     } catch (error) {
+        Sentry.captureException(error);
         console.log(error);
         let resp = ResponseTemplate(null, "internal server error", error, 500);
         res.json(resp);

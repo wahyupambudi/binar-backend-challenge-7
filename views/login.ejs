@@ -35,6 +35,14 @@
             border-radius: 4px;
             cursor: pointer;
         }
+        nav {
+            margin-bottom: 20px;
+        }
+
+        nav a {
+            margin-right: 20px;
+            text-decoration: none;
+        }        
     </style>
 </head>
 <body>
@@ -46,11 +54,16 @@
     <form action="/login" method="post">
         <label for="email">Email:</label>
         <input type="email" id="email" name="email" required>
-
         <label for="password">Password:</label>
         <input type="password" id="password" name="password" required>
-
         <button type="submit">Login</button>
     </form>
+
+    <div align="center">
+        <nav>
+            <a href="/forgotpassword">Forgot Password</a>
+        </nav>
+    </div>
+
 </body>
 </html>
