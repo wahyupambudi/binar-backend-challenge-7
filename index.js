@@ -93,7 +93,7 @@ app.post("/login", async (req, res) => {
 
   try {
     const response = await axios.post(
-      "http://localhost:8080/api/v1/auth/login",
+      `http://${process.env.URL_ENDPOINT}/api/v1/auth/login`,
       {
         email,
         password,
@@ -126,7 +126,7 @@ app.post("/register", async (req, res) => {
 
   try {
     const response = await axios.post(
-      "http://localhost:8080/api/v1/auth/register",
+      `http://${process.env.URL_ENDPOINT}/api/v1/auth/register`,
       {
         name,
         email,
@@ -135,8 +135,7 @@ app.post("/register", async (req, res) => {
     );
 
     if (response.data.message == "created success") {
-      // res.redirect("/login");
-      io.emit('registrationSuccess', { userId: 'user123' });
+      res.redirect("/login");
     } else {
       res.render("register", { error: `${response.data.message}` });
     }
@@ -161,7 +160,7 @@ app.post("/forgotpassword", async (req, res) => {
 
   try {
     const response = await axios.post(
-      "http://localhost:8080/api/v1/auth/forgotpassword",
+      `http://${process.env.URL_ENDPOINT}/api/v1/auth/forgotpassword`,
       {
         email,
       },
@@ -193,7 +192,7 @@ app.post("/resetpassword/:token", async (req, res) => {
 
   try {
     const response = await axios.post(
-      `http://localhost:8080/api/v1/auth/resetpassword/${token}`,
+      `http://${process.env.URL_ENDPOINT}/api/v1/auth/resetpassword/${token}`,
       {
         newPassword,
       },
