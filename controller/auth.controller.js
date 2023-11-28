@@ -8,6 +8,15 @@ const prisma = new PrismaClient();
 const Sentry = require("@sentry/node");
 require("dotenv").config();
 
+const express = require("express");
+const { createServer } = require("node:http");
+const { join } = require("node:path");
+const { Server } = require("socket.io");
+
+const app = express();
+const server = createServer(app);
+const io = new Server(server);
+
 const listTokens = [];
 
 const transporter = nodemailer.createTransport({
@@ -62,7 +71,8 @@ async function Register(req, res, next) {
         res.status(200).json(respons);
         return;
     } catch (error) {
-        Sentry.captureException(error);
+        console.log(error)
+        // Sentry.captureException(error);
         next(error);
     }
 }

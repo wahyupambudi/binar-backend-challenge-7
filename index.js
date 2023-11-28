@@ -1,19 +1,48 @@
 require("dotenv").config();
 
-
 const express = require("express");
+const { createServer } = require("node:http");
+const { join } = require("node:path");
+const { Server } = require("socket.io");
+
 const app = express();
+const server = createServer(app);
+const io = new Server(server);
+
+const router = require("./routes/route");
+const port = process.env.PORT || 3000;
+const jwt = require("jsonwebtoken");
+
 // sentry
 const Sentry = require("@sentry/node");
 const {ProfilingIntegration} = require("@sentry/profiling-node");
-// router
-const router = require("./routes/route");
-const port = process.env.PORT || 3000;
+
 const axios = require("axios");
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use("/", router);
+
+server.listen(port, () => {
+  console.log(`app listening on port ${port}`);
+});
+
+
+io.on('connect', (socket) => {
+  console.log(`User connected: ${socket.id}`);
+
+  socket.on('registrationSuccess', (data) => {
+    io.to(socket.id).emit('notification', { type: 'success', message: 'Registration successful!' });
+  });
+
+  socket.on('loginSuccess', (data) => {
+    io.to(socket.id).emit('notification', { type: 'success', message: 'Login successful!' });
+  });
+
+  socket.on('disconnect', () => {
+    console.log(`User disconnected: ${socket.id}`);
+  });
+});
 
 
 // sentry
@@ -106,7 +135,8 @@ app.post("/register", async (req, res) => {
     );
 
     if (response.data.message == "created success") {
-      res.redirect("/login");
+      // res.redirect("/login");
+      io.emit('registrationSuccess', { userId: 'user123' });
     } else {
       res.render("register", { error: `${response.data.message}` });
     }
@@ -184,6 +214,3 @@ app.post("/resetpassword/:token", async (req, res) => {
   }
 });
 
-app.listen(port, () => {
-  console.log(`app listening on port ${port}`);
-});
