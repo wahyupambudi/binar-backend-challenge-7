@@ -43,9 +43,9 @@ async function Register(req, res, next) {
                 null,
                 "email already used",
                 null,
-                400,
+                200,
             );
-            res.status(400).json(respons);
+            res.status(200).json(respons);
             return;
         }
 
@@ -76,26 +76,22 @@ async function Login(req, res, next) {
         });
 
         if (!user) {
-            let respons = ResponseTemplate(
-                null,
-                "bad request",
-                "invalid email or password",
-                400,
-            );
-            res.status(400).json(respons);
+            let respons = ResponseTemplate(null, "user not found", null, 200);
+            res.status(200).json(respons);
             return;
         }
+
 
         let checkPassword = await ComparePassword(password, user.password);
 
         if (!checkPassword) {
             let respons = ResponseTemplate(
                 null,
-                "bad request",
                 "invalid email or password",
-                400,
+                "bad request",
+                200,
             );
-            res.status(400).json(respons);
+            res.status(200).json(respons);
             return;
         }
 
@@ -117,7 +113,7 @@ async function ForgotPassword(req, res) {
     const { email } = req.body;
 
     if (!email) {
-        let resp = ResponseTemplate(null, "bad request", null, 400);
+        let resp = ResponseTemplate(null, "bad request", null, 200);
         res.json(resp);
         return;
     }
@@ -129,8 +125,8 @@ async function ForgotPassword(req, res) {
     });
 
     if (!user) {
-        let respons = ResponseTemplate(null, "user not found", null, 404);
-        res.status(404).json(respons);
+        let respons = ResponseTemplate(null, "user not found", null, 200);
+        res.status(200).json(respons);
         return;
     }
 
@@ -147,11 +143,16 @@ async function ForgotPassword(req, res) {
             { expiresIn: "15m" },
         );
 
-        const path = "/api/v1/auth/resetpassword";
-        const fullUrl = `${req.protocol}://${req.get(
+        const pathFrontend = "/resetpassword";
+        const urlFrontend = `${req.protocol}://${req.get(
             "host",
-        )}${path}/${getTokenReset}`;
-        // console.log(fullUrl);
+        )}${pathFrontend}/${getTokenReset}`;
+
+        const pathAPI = "/api/v1/auth/resetpassword";
+        const urlAPI = `${req.protocol}://${req.get(
+            "host",
+        )}${pathAPI}/${getTokenReset}`;
+        console.log(urlAPI);
 
         // async..await is not allowed in global scope, must use a wrapper
         async function main() {
@@ -163,7 +164,7 @@ async function ForgotPassword(req, res) {
                 html: `
                     <p><b>Please Verify with link bellow!</b> </p>
                     <p><b>This token valid for 15 minutes!</b> </p>
-                    <p><a href='${fullUrl}'>Click Here For Reset Password!</a></p>
+                    <p><a href='${urlFrontend}'>Click Here For Reset Password!</a></p>
                 `, // html body
             });
         }
