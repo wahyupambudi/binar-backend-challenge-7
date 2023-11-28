@@ -71,7 +71,7 @@ async function Register(req, res, next) {
         res.status(200).json(respons);
         return;
     } catch (error) {
-        console.log(error)
+        console.log(error);
         // Sentry.captureException(error);
         next(error);
     }
@@ -92,7 +92,6 @@ async function Login(req, res, next) {
             res.status(200).json(respons);
             return;
         }
-
 
         let checkPassword = await ComparePassword(password, user.password);
 
@@ -157,9 +156,9 @@ async function ForgotPassword(req, res) {
         );
 
         const pathFrontend = "/resetpassword";
-        const urlFrontend = `${req.protocol}://${req.get(
-            "host",
-        )}${pathFrontend}/${getTokenReset}`;
+        const urlFrontend = `${req.protocol}://${process.env.HOST_DEPLOY}${pathFrontend}/${getTokenReset}`;
+
+        // console.log(urlFrontend)
 
         const pathAPI = "/api/v1/auth/resetpassword";
         const urlAPI = `${req.protocol}://${req.get(
@@ -168,20 +167,20 @@ async function ForgotPassword(req, res) {
         console.log(urlAPI);
 
         // async..await is not allowed in global scope, must use a wrapper
-        async function main() {
-            // send mail with defined transport object
-            const info = await transporter.sendMail({
-                from: process.env.MAIL_SMTP, // sender address
-                to: email, // list of receivers
-                subject: "Forgot Password | Binar Academy ✔", // Subject line
-                html: `
-                    <p><b>Please Verify with link bellow!</b> </p>
-                    <p><b>This token valid for 15 minutes!</b> </p>
-                    <p><a href='${urlFrontend}'>Click Here For Reset Password!</a></p>
-                `, // html body
-            });
-        }
-        main().catch(console.error);
+        // async function main() {
+        //     // send mail with defined transport object
+        //     const info = await transporter.sendMail({
+        //         from: process.env.MAIL_SMTP, // sender address
+        //         to: email, // list of receivers
+        //         subject: "Forgot Password | Binar Academy ✔", // Subject line
+        //         html: `
+        //             <p><b>Please Verify with link bellow!</b> </p>
+        //             <p><b>This token valid for 15 minutes!</b> </p>
+        //             <p><a href='${urlFrontend}'>Click Here For Reset Password!</a></p>
+        //         `, // html body
+        //     });
+        // }
+        // main().catch(console.error);
 
         let respons = ResponseTemplate(null, "success", null, 200);
         res.status(200).json(respons);
@@ -208,15 +207,24 @@ async function ResetPassword(req, res) {
 
     try {
         // verifikasi token
-        const verifyToken = await jwt.verify(token, process.env.SECRET_KEY, (err, decoded) => {
-            if(err) {
-                let respons = ResponseTemplate(null, "token expired", null, 401);
-                res.status(401).json(respons);
-                return;
-            } else {
-                getEmail.push(decoded.email)
-            }
-        });
+        const verifyToken = await jwt.verify(
+            token,
+            process.env.SECRET_KEY,
+            (err, decoded) => {
+                if (err) {
+                    let respons = ResponseTemplate(
+                        null,
+                        "token expired",
+                        null,
+                        401,
+                    );
+                    res.status(401).json(respons);
+                    return;
+                } else {
+                    getEmail.push(decoded.email);
+                }
+            },
+        );
 
         // dapatkan email
         const email = getEmail[0];
@@ -229,8 +237,8 @@ async function ResetPassword(req, res) {
                 email: String(email),
             },
             data: {
-                password: hashPass
-            } ,
+                password: hashPass,
+            },
         });
 
         let respons = ResponseTemplate(null, "success", null, 200);
